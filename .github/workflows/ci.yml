@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: tests (${{ matrix.os }}, Python ${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install (pinned by constraints.txt)
+        run: python -m pip install -c constraints.txt -e ".[dev]"
+
+      # Unit, in-memory MCP, real Streamable HTTP end-to-end, evaluation and demo-drift tests.
+      - name: Tests
+        run: python -m pytest -q
+
+      # Exits non-zero on any scope leak, authorization miss or unsupported claim.
+      - name: Evaluation (Demo Mode, deterministic, no LLM)
+        run: python -m ledger_assistant eval --out evals-output
+
+      - name: Demo data is up to date
+        run: python -m ledger_assistant build-demo --check
+
+      - name: Upload evaluation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evals-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: evals-output/
+          if-no-files-found: ignore

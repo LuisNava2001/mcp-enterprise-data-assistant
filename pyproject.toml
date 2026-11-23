@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcp-enterprise-data-assistant"
+version = "0.1.0"
+description = "MCP server, client and agent for a fictional finance dataset: guarded tools, local bearer-token auth and a deterministic evaluation harness."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  # Official Model Context Protocol SDK (v2).
+  "mcp==2.3.0",
+  # Imported directly; versions are set by the MCP SDK and pinned in constraints.txt.
+  "pydantic>=2",
+  "pyjwt",
+  "uvicorn",
+  "starlette",
+  "httpx2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3"]
+# Optional LLM Mode (not exercised by the tests or CI). Credentials come from the environment, never the repo.
+llm = ["anthropic"]
+
+[project.scripts]
+ledger-assistant = "ledger_assistant.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ledger_assistant = ["evaluation/cases.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-p no:cacheprovider"

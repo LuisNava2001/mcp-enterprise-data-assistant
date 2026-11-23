@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ledger Assistant Demo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <h1>Ledger Assistant <span class="sub">MCP enterprise data assistant</span></h1>
+      <p class="lede">
+        Recorded traces from a real evaluation run: an MCP client talking to the MCP server over Streamable HTTP
+        with a bearer token per fictional user. All data is synthetic.
+      </p>
+      <p class="badges">
+        <span class="badge badge-mode" id="mode-badge">Demo Mode: deterministic planner, no LLM</span>
+        <span class="badge" id="grader-badge"></span>
+      </p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section aria-labelledby="metrics-title">
+      <h2 id="metrics-title">Evaluation metrics <span class="muted" id="metrics-meta"></span></h2>
+      <div class="metrics" id="metrics"></div>
+    </section>
+
+    <section class="layout" aria-label="Cases">
+      <nav class="cases" aria-label="Evaluation cases">
+        <label class="filter">
+          <span>Category</span>
+          <select id="category-filter"></select>
+        </label>
+        <ol id="case-list"></ol>
+      </nav>
+      <article class="detail" id="detail" aria-live="polite"></article>
+    </section>
+  </main>
+
+  <footer class="wrap foot">
+    Fictional company and data. Regenerate with <code>ledger-assistant build-demo</code>.
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

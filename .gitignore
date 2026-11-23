@@ -1,0 +1,36 @@
+# Virtual environments and packaging
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.deepeval/
+
+# Generated data (recreate with `ledger-assistant generate-data`). Anchored: src/ledger_assistant/data/ is source.
+/data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Local secrets and configuration (none are committed)
+.env
+.env.*
+*.local.json
+*.key
+
+# Evaluation scratch output (the committed summary lives in demo/ and docs/)
+evals-output/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
