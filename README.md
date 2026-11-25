@@ -1,9 +1,17 @@
-# mcp-enterprise-data-assistant
+# MCP Enterprise Data Assistant
 
-A Model Context Protocol (MCP) server, client and agent for a fictional company's finance data, with server-side
-guardrails, local bearer-token authentication and a deterministic evaluation harness. All data is synthetic. By
-default (Demo Mode) the agent's planner is deterministic and rule-based and does not use a language model; an
-optional Claude planner exists but has not been tested against the live API.
+A Model Context Protocol (MCP) server, client and agent for a fictional company's finance data. Eight typed,
+read-only tools run behind bearer-token authentication; row scope, tax-id masking and argument checks are enforced
+in the server, and a deterministic harness evaluates 50 questions end to end over real HTTP.
+
+![Offline demo: evaluation metrics, and an invoice outside the caller's scope returned by the server as NOT_FOUND](docs/img/demo-overview.png)
+
+**Stack:** Python 3.11+ · MCP Python SDK 2.3 (Streamable HTTP) · Pydantic v2 · SQLite · PyJWT · pytest · GitHub
+Actions. **Try it:** [Quick Start](#7-quick-start) or open `demo/index.html` offline.
+
+> **Demo scope.** Demo Mode uses a deterministic, rule-based planner and no language model; the optional Claude
+> planner (LLM Mode) has not been tested against the live API and has no recorded results. Authentication uses a
+> local HS256 demo issuer, not an identity provider. All data is synthetic.
 
 ## 1. Project Overview
 
@@ -111,8 +119,6 @@ Open `demo/index.html` in a browser (no server needed). It replays traces record
 question, planner decision, tool and arguments, structured result, evidence, final answer and the evaluation
 checks for that case. The header states the mode: **Demo Mode, deterministic planner, no LLM**.
 
-![Demo overview](docs/img/demo-overview.png)
-
 Suggested path: `#L01` payment status → `#Z01` another business unit's invoice returns not found → `#Q01` an
 identity claim in the question is ignored → `#R01` an instruction hidden in a memo is withheld by the client's
 composer (below) → `#V06` a
@@ -176,7 +182,10 @@ evaluation scores above come from the deterministic Demo Mode planner, not from 
 
 ## 14. AI-Assisted Development Disclosure
 
-Built with AI assistance: the code, tests and documentation were drafted with Claude Code (Anthropic) under the
-author's direction. The author defined the scope, constraints and acceptance criteria and is responsible for
-reviewing and approving every change before publication. Test results, evaluation scores and screenshots come
-from actual local runs.
+I designed and directed this project; it was implemented with substantial help from Claude Code (Anthropic). I
+defined the problem, scope, constraints and acceptance criteria, reviewed the design and the results, and decided
+what to publish. Most of the code, tests and documentation were generated with the assistant under that direction,
+which is why the commits carry a `Co-Authored-By` trailer. Results quoted here come from the automated tests,
+evaluations and CI runs in this repository, on synthetic data. They show that the code behaves as described under
+those conditions, not that it is ready for production, and nothing this README marks as simulated, planned or not
+tested has been validated.
