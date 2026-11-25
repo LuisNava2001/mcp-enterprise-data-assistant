@@ -67,6 +67,9 @@ The same numbers are embedded in `demo/data.js`, which is regenerated from a rea
 - **The harness can fail.** `test_harness_detects_a_bad_planner` runs a planner that always lists payables and
   asserts the scores collapse.
 - **LLM Mode has no recorded result.** `ledger-assistant eval --planner llm` is implemented but has not been run;
-  no LLM scores are reported anywhere in this repository.
+  no LLM scores are reported anywhere in this repository. Before trusting such a run, note that API failures
+  become refusals and that cases expecting a refusal pass for any refusal reason (the reason is only reported),
+  so a run with broken credentials would still pass those cases. A real LLM run should check that no
+  `planner_error` refusals occurred.
 - **LLM-as-judge is not implemented.** If added, it should stay a separate, clearly labelled report next to the
   deterministic checks, never replace them.

@@ -1,7 +1,8 @@
 # Architecture
 
-The system has three layers that only talk through MCP: a **server** that owns the data and every control, a
-**client** that speaks the protocol, and an **orchestrator** that turns a question into one tool call and an answer.
+The system has three layers that only talk through MCP: a **server** that owns the data and every access control, a
+**client** that speaks the protocol, and an **orchestrator** that turns a question into one tool call and an answer
+(its composer also withholds instruction-like memo text; see [security.md](security.md#server-and-client-trust-boundary)).
 
 ```mermaid
 sequenceDiagram
@@ -82,6 +83,13 @@ policy grounds, the API may re-run that same request on another Claude model tha
 never changes (Anthropic only), the fallback applies only to refusals, and the trace does not yet record which
 model served the call. To disable it, remove the `betas` and `fallbacks` arguments in `agent/llm.py`. Like the
 rest of LLM Mode, this behaviour has not been exercised against the live API.
+
+**Error handling (experimental).** Any exception from the API call (authentication, rate limit, timeout, network)
+becomes a labelled `planner_error` refusal, and `max_tokens` stops do too; no tool is called. This path is
+checked only with the fake client and has no production validation. The client is created with the SDK's
+defaults (its built-in retries for transient errors apply); the planner adds no policy of its own and, once the
+SDK gives up, treats every failure the same way. A run with broken credentials therefore shows refusals, not a
+crash.
 
 ## Data model
 

@@ -24,6 +24,10 @@ def test_protected_resource_metadata_and_health(http_server: EmbeddedServer) -> 
     meta = httpx2.get(f"{base}/.well-known/oauth-protected-resource/mcp", timeout=10).json()
     assert meta["resource"] == http_server.url
     assert meta["scopes_supported"] == ["ledger:access"]
+    # The metadata names the local demo issuer (the `iss` of the tokens), but no authorization server runs here:
+    # tokens are minted out of band, so standard OAuth discovery cannot go further. The docs say exactly this.
+    assert [server.rstrip("/") for server in meta["authorization_servers"]] == [base]
+    assert httpx2.get(f"{base}/.well-known/oauth-authorization-server", timeout=10).status_code == 404
     assert httpx2.get(f"{base}/healthz", timeout=10).json() == {"status": "ok"}
 
 

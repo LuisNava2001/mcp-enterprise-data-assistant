@@ -1,7 +1,9 @@
 # mcp-enterprise-data-assistant
 
 A Model Context Protocol (MCP) server, client and agent for a fictional company's finance data, with server-side
-guardrails, local bearer-token authentication and a deterministic evaluation harness. All data is synthetic.
+guardrails, local bearer-token authentication and a deterministic evaluation harness. All data is synthetic. By
+default (Demo Mode) the agent's planner is deterministic and rule-based and does not use a language model; an
+optional Claude planner exists but has not been tested against the live API.
 
 ## 1. Project Overview
 
@@ -23,8 +25,9 @@ Connecting an AI assistant to business data raises three questions this project 
 ## 3. Features
 
 - 8 typed, read-only MCP tools with JSON output schemas, result limits and cursor pagination; no arbitrary SQL.
-- OAuth 2.1 resource-server shape: the SDK's auth middleware validates a short-lived JWT on every request, and the
-  server publishes Protected Resource Metadata.
+- OAuth 2.1 resource server: the SDK's auth middleware validates a short-lived JWT on every request, and the
+  server publishes Protected Resource Metadata (RFC 9728). There is no authorization server; demo tokens are minted
+  locally.
 - Server-enforced row scope per fictional user, tax-id masking, unknown-argument rejection, controlled errors.
 - Official MCP client over Streamable HTTP; orchestrator separate from the server.
 - **Demo Mode** (default): deterministic planner, no LLM. **LLM Mode** (optional): Claude picks the tool;
@@ -111,21 +114,28 @@ checks for that case. The header states the mode: **Demo Mode, deterministic pla
 ![Demo overview](docs/img/demo-overview.png)
 
 Suggested path: `#L01` payment status → `#Z01` another business unit's invoice returns not found → `#Q01` an
-identity claim in the question is ignored → `#R01` an instruction hidden in a memo is withheld (below) → `#V06` a
+identity claim in the question is ignored → `#R01` an instruction hidden in a memo is withheld by the client's
+composer (below) → `#V06` a
 `subject` argument is rejected → `#P01` two-turn pagination.
 
 ![Record-text injection case](docs/img/demo-record-injection.png)
 
 ## 9. Guardrails & Security
 
-All controls run in the server: token verification (signature, issuer, audience, expiry), scope intersection,
-row scope inside every query, `NOT_FOUND` for out-of-scope records, tax-id masking, no bank fields, unknown-argument
-rejection, read-only SQLite (`mode=ro` plus `query_only`), bound parameters only, capped and user-bound cursors,
-loopback-only binding and DNS-rebinding protection. Record text is marked untrusted and never repeated when it
-looks like an instruction.
+Access controls run in the server and hold for any MCP client: token verification (signature, issuer, audience,
+expiry), scope intersection, row scope inside every query, `NOT_FOUND` for out-of-scope records, tax-id masking, no
+bank fields, unknown-argument rejection, read-only SQLite (`mode=ro` plus `query_only`), bound parameters only,
+capped and user-bound cursors, loopback-only binding and DNS-rebinding protection.
+
+Two safeguards run in this repository's client, not in the server. The composer withholds memo text that matches
+an instruction-keyword list, and the planner flags identity claims written in the question. The server returns
+memos verbatim, marked in `untrusted_fields`; another MCP client receives that raw text and must treat it as data
+itself. Either way, record text cannot trigger an action, because every tool is read-only.
 
 This is **demo authentication, not enterprise authentication**: a local HS256 issuer stands in for an identity
-provider. The OAuth 2.1 / OIDC production design is in [docs/security.md](docs/security.md).
+provider. The Protected Resource Metadata names that local issuer, but no authorization-server endpoints exist, so
+standard OAuth discovery cannot complete; tokens are minted out of band by the CLI. The OAuth 2.1 / OIDC
+production design is in [docs/security.md](docs/security.md).
 
 ## 10. Evaluation & Testing
 
