@@ -160,7 +160,7 @@ evaluation scores above come from the deterministic Demo Mode planner, not from 
 
 | Status | Items |
 | --- | --- |
-| **Implemented** | MCP server (SDK v2, Streamable HTTP), 8 tools, token verification as a resource server, access policy, read-only data layer, pagination, MCP client, deterministic planner, composer, orchestrator, evaluation harness, CLI, static demo, tests, GitHub Actions workflow (Ubuntu and Windows, Python 3.11 and 3.12; results in the repository's Actions tab) |
+| **Implemented** | MCP server (SDK v2, Streamable HTTP), 8 tools, token verification as a resource server, access policy, read-only data layer, pagination, MCP client, deterministic planner, composer, orchestrator, evaluation harness, CLI, static demo, tests, GitHub Actions workflow (Ubuntu and Windows, Python 3.11 to 3.13; results in the repository's Actions tab) |
 | **Simulated** | The company and all data; the token issuer and user directory (local HS256 secret instead of an identity provider) |
 | **Planned** | OAuth 2.1 / OIDC with an external provider, multi-step plans, LLM-as-judge report, audit log and rate limits, MCP resources and prompts |
 | **Not Tested** | LLM Mode against the live API (implemented and unit-tested with a fake client only; the Anthropic SDK is not installed by default); third-party MCP clients such as MCP Inspector (only the official Python SDK client and raw JSON-RPC requests were exercised); macOS (not in the CI matrix) |

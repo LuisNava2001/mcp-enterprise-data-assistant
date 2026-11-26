@@ -38,7 +38,7 @@ python -m ledger_assistant build-demo --check
 ## Continuous integration
 
 `.github/workflows/ci.yml` installs the pinned dependencies and runs the test suite, the evaluation (which exits
-non-zero on any safety regression) and the demo-drift check on Ubuntu and Windows with Python 3.11 and 3.12.
+non-zero on any safety regression) and the demo-drift check on Ubuntu and Windows with Python 3.11 to 3.13.
 Results are in the repository's Actions tab; they are not part of the local run above.
 
 Interoperability with third-party MCP clients (for example MCP Inspector) has not been tested; only the official
